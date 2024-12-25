@@ -10,7 +10,7 @@ public class SampleTest {
     public void testSample() {
         browserManager.setDriver(BrowserType.CHROME);
         browserManager.navigateTo("https://www.google.com/");
-        ((RegularBrowserManager) browserManager).setWindowSize(200, 400);
+        browserManager.setWindowSize(200, 400);
         browserManager.closeDriver();
     }
 }

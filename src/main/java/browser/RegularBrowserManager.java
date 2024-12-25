@@ -13,13 +13,15 @@ public class RegularBrowserManager {
     private WebDriver driver;
     private BrowserSessionService browserSessionManager;
     private BrowserWindowService browserWindowManager;
+    private BrowserPageService browserPageManager;
 
     /**
      * Constructor to initialize the RegularBrowserManager and the BrowserSessionService.
      */
     public RegularBrowserManager() {
-        browserSessionManager = new BrowserSessionManager();
+        browserSessionManager = new BrowserSessionManager(driver);
         browserWindowManager = new BrowserWindowManager(driver);
+        browserPageManager = new BrowserPageManager(driver);
     }
 
     /**
@@ -76,9 +78,7 @@ public class RegularBrowserManager {
      * Refreshes the current page in the active browser.
      */
     public void refreshPage() {
-        if (driver != null) {
-            driver.navigate().refresh();
-        }
+        browserPageManager.refreshPage();
     }
 
     /**

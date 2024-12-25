@@ -10,8 +10,8 @@ public class BrowserSessionManager implements BrowserSessionService {
 
     WebDriver driver;
 
-    public BrowserSessionManager() {
-
+    public BrowserSessionManager(WebDriver driver) {
+        this.driver = driver;
     }
 
     @Override
