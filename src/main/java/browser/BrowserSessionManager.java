@@ -4,6 +4,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.openqa.selenium.ie.InternetExplorerDriverLogLevel;
 import org.openqa.selenium.safari.SafariDriver;
 
 /**
@@ -13,7 +14,7 @@ import org.openqa.selenium.safari.SafariDriver;
  */
 public class BrowserSessionManager implements BrowserSessionService {
 
-    WebDriver driver;
+    private WebDriver driver;
 
     /**
      * Constructs a new BrowserSessionManager with the given WebDriver.
@@ -27,11 +28,11 @@ public class BrowserSessionManager implements BrowserSessionService {
     /**
      * Sets the WebDriver for the specified browser type.
      *
-     * @param browserType The type of browser to create a driver for.
+     * @param browserProvider The type of browser to create a driver for.
      */
     @Override
-    public void setDriver(BrowserType browserType) {
-        driver = BrowserFactory.createDriver(browserType);
+    public void setDriver(BrowserProvider browserProvider) {
+        driver = BrowserFactory.createDriver(browserProvider);
     }
 
     /**
@@ -74,27 +75,40 @@ public class BrowserSessionManager implements BrowserSessionService {
      */
     @Override
     public void restartDriver() {
-        String currentBrowser = getCurrentBrowser();
+        if (driver == null) {
+            throw new IllegalStateException("Driver is not initialized. Cannot restart.");
+        }
+        BrowserType currentBrowserType = getBrowserTypeFromDriver();
         closeDriver();
-        setDriver(BrowserType.valueOf(currentBrowser.toUpperCase()));
+        setDriver(new EnumBrowserProvider(currentBrowserType));
     }
 
     /**
      * Determines the type of the current browser being used.
      *
-     * @return A string representing the current browser type ("CHROME", "FIREFOX", "IE", "SAFARI", or "UNKNOWN").
+     * @return A BrowserType enum representing the current browser type.
+     */
+    private BrowserType getBrowserTypeFromDriver() {
+        if (driver instanceof ChromeDriver) {
+            return BrowserType.CHROME;
+        } else if (driver instanceof FirefoxDriver) {
+            return BrowserType.FIREFOX;
+        } else if (driver instanceof InternetExplorerDriver) {
+            return BrowserType.IE;
+        } else if (driver instanceof SafariDriver) {
+            return BrowserType.SAFARI;
+        }
+        return null;
+    }
+
+    /**
+     * Returns the current browser type as a string.
+     *
+     * @return A string representation of the current browser type.
      */
     @Override
     public String getCurrentBrowser() {
-        if (driver instanceof ChromeDriver) {
-            return "CHROME";
-        } else if (driver instanceof FirefoxDriver) {
-            return "FIREFOX";
-        } else if (driver instanceof InternetExplorerDriver) {
-            return "IE";
-        } else if (driver instanceof SafariDriver) {
-            return "SAFARI";
-        }
-        return "UNKNOWN";
+        BrowserType browserType = getBrowserTypeFromDriver();
+        return browserType != null ? browserType.name() : "UNKNOWN";
     }
 }

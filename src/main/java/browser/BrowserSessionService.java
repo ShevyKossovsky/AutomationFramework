@@ -9,7 +9,7 @@ public interface BrowserSessionService {
      *
      * @param browserType The type of browser to set the driver for.
      */
-    void setDriver(BrowserType browserType);
+    void setDriver(BrowserProvider browserProvider);
 
     /**
      * Closes the current browser driver.
