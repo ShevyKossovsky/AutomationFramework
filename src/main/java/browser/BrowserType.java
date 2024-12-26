@@ -5,12 +5,24 @@ package browser;
  * This enum provides a list of commonly used web browsers for testing purposes.
  */
 public enum BrowserType {
-    /** Google Chrome browser */
+    /**
+     * Google Chrome browser
+     */
     CHROME,
-    /** Mozilla Firefox browser */
+    /**
+     * Mozilla Firefox browser
+     */
     FIREFOX,
-    /** Internet Explorer browser */
+    /**
+     * Internet Explorer browser
+     */
     IE,
-    /** Apple Safari browser */
-    SAFARI
+    /**
+     * Apple Safari browser
+     */
+    SAFARI,
+    /**
+     * Microsoft Edge browser
+     */
+    EDGE
 }
