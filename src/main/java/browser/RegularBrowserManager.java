@@ -1,31 +1,10 @@
 package browser;
 
-import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
 
 /**
  * The {@code RegularBrowserManager} class is a central manager for handling WebDriver instances
- * and browser-related operations. This class abstracts session management, window management,
- * and page navigation functionalities, making it easier to interact with browsers in a unified way.
- *
- * <h2>Responsibilities:</h2>
- * <ul>
- *     <li>Initialize WebDriver instances for supported browsers.</li>
- *     <li>Manage browser sessions, navigation, and state.</li>
- *     <li>Handle browser window resizing, maximizing, and minimizing.</li>
- *     <li>Perform page-related actions such as refreshing and retrieving the current URL.</li>
- * </ul>
- *
- * <h2>Components:</h2>
- * <ul>
- *     <li>{@code BrowserSessionService}: Manages browser sessions, including initialization and closing.</li>
- *     <li>{@code BrowserWindowService}: Handles browser window operations like resizing and maximizing.</li>
- *     <li>{@code BrowserPageService}: Manages page-specific operations like refreshing and navigation.</li>
- * </ul>
- *
- * <h2>Usage:</h2>
- * Create an instance of {@code RegularBrowserManager}, set the browser driver using a {@code BrowserProvider},
- * and invoke methods to perform browser operations.
+ * and browser-related operations.
  */
 public class RegularBrowserManager {
 
@@ -35,33 +14,45 @@ public class RegularBrowserManager {
     private BrowserPageService browserPageManager;
 
     /**
-     * Constructor to initialize the {@code RegularBrowserManager} and its services.
+     * Constructor to initialize the {@code RegularBrowserManager} and its services with the provided WebDriver.
+     *
+     * @param driver the WebDriver instance that will be used across the manager's operations.
      */
     public RegularBrowserManager() {
-        browserSessionManager = new BrowserSessionManager(driver);
-        browserWindowManager = new BrowserWindowManager(driver);
-        browserPageManager = new BrowserPageManager(driver);
+        this.browserSessionManager = new BrowserSessionManager(driver);
+        this.browserWindowManager = new BrowserWindowManager(driver);
+        this.browserPageManager = new BrowserPageManager(driver);
     }
 
+    /**
+     * Retrieves the current WebDriver instance.
+     *
+     * @return the current WebDriver instance.
+     * @throws IllegalStateException if the driver is not initialized.
+     */
     public WebDriver getDriver() {
-        // Return the WebDriver instance.
+        if (driver == null) {
+            throw new IllegalStateException("Driver is not initialized. Please provide a valid driver.");
+        }
         return driver;
     }
 
     /**
-     * Sets the WebDriver using the provided {@link BrowserProvider}.
+     * Sets the WebDriver by creating a new driver based on the provided {@link BrowserProvider}.
+     * This will update the {@code driver} instance for the current session.
      *
      * @param browserProvider the implementation of {@code BrowserProvider} to set the WebDriver.
      */
     public void setDriver(BrowserProvider browserProvider) {
-        browserSessionManager.setDriver(browserProvider);
+        // Use BrowserFactory to create a new driver and assign it to the instance variable.
+        this.driver = this.browserSessionManager.setDriver(browserProvider);
     }
 
     /**
      * Closes the active WebDriver session.
      */
     public void closeDriver() {
-        browserSessionManager.closeDriver();
+        browserSessionManager.closeDriver(driver);
     }
 
     /**
@@ -86,7 +77,7 @@ public class RegularBrowserManager {
      * Restarts the active WebDriver session.
      */
     public void restartDriver() {
-        browserSessionManager.restartDriver();
+        browserSessionManager.restartDriver(driver);
     }
 
     /**
