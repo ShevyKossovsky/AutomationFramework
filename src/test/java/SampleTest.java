@@ -12,8 +12,10 @@ public class SampleTest {
     public void testSample() {
         browserManager.setDriver(new JsonBrowserProvider("./settings.json"));
         browserManager.navigateTo("https://www.google.com/");
-        browserManager.setWindowSize(200, 400);
-        browserManager.closeDriver();
+        browserManager.setWindowSize(100, 100);
 
+        browserManager.closeDriver();
     }
+
+
 }

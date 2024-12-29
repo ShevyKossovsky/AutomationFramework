@@ -16,14 +16,12 @@ public class LoggerExtension implements BeforeAllCallback, BeforeEachCallback, A
     @Override
     public void beforeAll(ExtensionContext context) throws Exception {
         logger.info("Before all tests in class: {}", context.getTestClass().orElseThrow().getName());
-        // Initialize global resources, e.g., WebDriver, DB connections
     }
 
     @Override
     public void beforeEach(ExtensionContext context) throws Exception {
         String testName = context.getDisplayName();
         logger.info("Before each test: {}", testName);
-        // Load test data or set up preconditions for each test
     }
 
     @Override
@@ -37,14 +35,11 @@ public class LoggerExtension implements BeforeAllCallback, BeforeEachCallback, A
         } else {
             logger.info("Test passed: {}", testName);
         }
-
-        // Clean up resources specific to the test
     }
 
     @Override
     public void afterAll(ExtensionContext context) throws Exception {
         logger.info("After all tests in class: {}", context.getTestClass().orElseThrow().getName());
-        // Clean up global resources, e.g., close WebDriver, DB connections
     }
 
     /**
@@ -66,11 +61,4 @@ public class LoggerExtension implements BeforeAllCallback, BeforeEachCallback, A
         }
     }
 
-    /**
-     * Example method to send test results to an external reporting tool.
-     */
-    private void sendTestStatusToReportPortal(String testName, String status) {
-        // Replace with integration logic for Report Portal or another tool
-        logger.info("Sending test result to Report Portal: Test={} Status={}", testName, status);
-    }
 }

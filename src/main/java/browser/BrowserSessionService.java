@@ -27,9 +27,8 @@ public interface BrowserSessionService {
      * the {@link BrowserProvider}. The WebDriver will be set for use in the current session.
      *
      * @param browserProvider the implementation of {@link BrowserProvider} that provides the browser type.
-     * @return the initialized WebDriver instance for the specified browser.
      */
-    WebDriver setDriver(BrowserProvider browserProvider);
+    void setDriver(BrowserProvider browserProvider);
 
     /**
      * Closes the current browser session.

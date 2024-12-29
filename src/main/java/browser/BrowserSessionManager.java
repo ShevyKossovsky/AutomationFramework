@@ -12,7 +12,8 @@ import org.openqa.selenium.WebDriver;
  */
 public class BrowserSessionManager implements BrowserSessionService {
 
-    private WebDriver driver; // The WebDriver instance managing the browser session.
+    // The WebDriver instance managing the browser session.
+    private WebDriver driver;
 
     /**
      * Constructor to initialize BrowserSessionManager with an existing WebDriver.
@@ -53,10 +54,9 @@ public class BrowserSessionManager implements BrowserSessionService {
      * @return the initialized WebDriver instance for the specified browser.
      */
     @Override
-    public WebDriver setDriver(BrowserProvider browserProvider) {
+    public void setDriver(BrowserProvider browserProvider) {
         // Use the BrowserFactory to create the WebDriver based on the browser type.
         driver = BrowserFactory.createDriver(browserProvider);
-        return driver;
     }
 
     /**
@@ -96,9 +96,9 @@ public class BrowserSessionManager implements BrowserSessionService {
      */
     @Override
     public void navigateTo(String url) {
-        if (driver != null) {
+        if (driver != null)
             driver.get(url);
-        } else {
+        else {
             throw new IllegalStateException("Driver is not initialized. Unable to navigate.");
         }
     }

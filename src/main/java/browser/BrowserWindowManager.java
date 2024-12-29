@@ -9,7 +9,9 @@ import org.openqa.selenium.WebDriver;
  */
 public class BrowserWindowManager implements BrowserWindowService {
 
-    /** The WebDriver instance used for browser interactions. */
+    /**
+     * The WebDriver instance used for browser interactions.
+     */
     WebDriver driver;
 
     /**
@@ -18,6 +20,7 @@ public class BrowserWindowManager implements BrowserWindowService {
      * @param driver The WebDriver instance to be used for browser window operations.
      */
     public BrowserWindowManager(WebDriver driver) {
+
         this.driver = driver;
     }
 
