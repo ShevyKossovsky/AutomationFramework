@@ -1,4 +1,4 @@
-package browser;
+package driver;
 
 import org.openqa.selenium.WebDriver;
 
@@ -7,7 +7,7 @@ import org.openqa.selenium.WebDriver;
  * This interface defines methods for interacting with a browser session, including setting the driver,
  * closing the browser, checking if the browser is active, navigating to URLs, and more.
  */
-public interface BrowserSessionService {
+public interface DriverSessionService {
 
     /**
      * Retrieves the current WebDriver instance.
@@ -24,11 +24,11 @@ public interface BrowserSessionService {
      * Sets the WebDriver instance for the specified browser.
      * <p>
      * This method initializes and configures the WebDriver according to the browser type provided by
-     * the {@link BrowserProvider}. The WebDriver will be set for use in the current session.
+     * the {@link DriverProvider}. The WebDriver will be set for use in the current session.
      *
-     * @param browserProvider the implementation of {@link BrowserProvider} that provides the browser type.
+     * @param browserProvider the implementation of {@link DriverProvider} that provides the browser type.
      */
-    void setDriver(BrowserProvider browserProvider);
+    WebDriver setDriver(DriverProvider browserProvider);
 
     /**
      * Closes the current browser session.
@@ -37,7 +37,7 @@ public interface BrowserSessionService {
      *
      * @param driver the WebDriver instance to be closed.
      */
-    void closeDriver(WebDriver driver);
+    void quitDriver(WebDriver driver);
 
     /**
      * Checks if the browser is currently active.

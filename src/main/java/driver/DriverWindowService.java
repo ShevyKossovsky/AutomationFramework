@@ -1,9 +1,9 @@
-package browser;
+package driver;
 
 /**
  * Provides services for managing browser window operations.
  */
-public interface BrowserWindowService {
+public interface DriverWindowService {
     
     /**
      * Maximizes the browser window to fill the entire screen.

@@ -1,12 +1,12 @@
 package extensions;
 
-import browser.RegularBrowserManager;
 import org.junit.jupiter.api.extension.*;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -15,36 +15,42 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 /**
- * ScreenshotExtension class is a JUnit 5 extension for capturing screenshots when tests fail.
- * It captures a screenshot only if a valid WebDriver instance is available.
+ * ScreenshotExtension is a JUnit 5 extension designed to capture screenshots when test cases fail.
+ * <p>
+ * This class is particularly useful for debugging and identifying the state of the application at the time of failure.
+ * It uses Selenium WebDriver to capture the current browser window's state as an image file.
+ * </p>
+ * <p>
+ * Key Features:
+ * <ul>
+ *     <li>Captures screenshots only for failed test cases.</li>
+ *     <li>Automatically saves screenshots with a timestamp and test name for easy identification.</li>
+ *     <li>Ensures the output directory exists before saving files.</li>
+ * </ul>
+ * </p>
  */
 public class ScreenshotExtension implements TestWatcher {
 
+    /**
+     * Logger instance to log messages and errors related to screenshot capturing.
+     */
     private static final Logger logger = LoggerFactory.getLogger(ScreenshotExtension.class);
-    private static StoreManager storeManager;
-
-    // Constructor: Ensure storeManager is initialized correctly
-    public ScreenshotExtension() {
-        storeManager = StoreManager.getInstance(); // Initialize StoreManager using Singleton pattern
-    }
 
     /**
-     * This method is called when a test fails. It captures a screenshot if a valid WebDriver is available.
+     * Invoked when a test fails. This method attempts to capture a screenshot of the current browser state.
      *
-     * @param context The ExtensionContext for the current test
-     * @param cause   The exception that caused the test failure
+     * @param context The ExtensionContext representing the current test execution state.
+     * @param cause   The Throwable that caused the test to fail.
      */
     @Override
     public void testFailed(ExtensionContext context, Throwable cause) {
         String testName = context.getDisplayName();
 
-        // Get the browserManager from the store
-        RegularBrowserManager browserManager = (RegularBrowserManager) storeManager.getStoreValue("browserManager");
 
-        // Get the WebDriver instance from browserManager
-        WebDriver driver = getDriver(browserManager);
+        // Retrieve the first available WebDriver instance from DriverStoreManager
+        WebDriver driver = DriverStoreManager.getCurrentDriver();
 
-        // If WebDriver is available, take the screenshot
+        // Check if a valid WebDriver instance is available
         if (driver != null) {
             takeScreenshot(driver, testName);
         } else {
@@ -53,40 +59,37 @@ public class ScreenshotExtension implements TestWatcher {
     }
 
     /**
-     * Takes a screenshot and saves it to a file.
+     * Captures a screenshot using the provided WebDriver instance and saves it to a file.
      *
-     * @param driver   WebDriver instance
-     * @param testName The name of the test (used for naming the screenshot file)
+     * <p>
+     * The screenshot is saved in the "screenshots" directory with a filename that includes the test name
+     * and a timestamp to avoid overwriting files from previous test runs.
+     * </p>
+     *
+     * @param driver   The WebDriver instance used to capture the screenshot.
+     * @param testName The name of the test, used to construct the screenshot filename.
      */
     private void takeScreenshot(WebDriver driver, String testName) {
         try {
-            // Take the screenshot and save it to a file
+            // Capture the screenshot as a file
             File screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+
+            // Format the current date and time for the screenshot filename
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
             String formattedDate = LocalDateTime.now().format(formatter);
 
+            // Define the destination path for the screenshot
             Path destinationPath = Paths.get("screenshots", testName + "_" + formattedDate + ".png");
 
-            // Ensure the directory exists and copy the screenshot
+            // Ensure the destination directory exists
             Files.createDirectories(destinationPath.getParent());
+
+            // Copy the screenshot file to the destination path
             Files.copy(screenshot.toPath(), destinationPath);
 
+            logger.info("Screenshot saved at: {}", destinationPath.toAbsolutePath());
         } catch (Exception e) {
             logger.error("Error capturing screenshot for test: {}", testName, e);
         }
-    }
-
-    /**
-     * Retrieves the WebDriver instance from the RegularBrowserManager.
-     *
-     * @param browserManager RegularBrowserManager instance
-     * @return WebDriver instance or null if not found
-     */
-    private WebDriver getDriver(RegularBrowserManager browserManager) {
-        if (browserManager != null) {
-            return browserManager.getDriver();
-        }
-        logger.warn("RegularBrowserManager is not set or does not have a driver.");
-        return null;
     }
 }

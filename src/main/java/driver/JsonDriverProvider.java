@@ -1,4 +1,4 @@
-package browser;
+package driver;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -7,7 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 /**
- * Implementation of {@link BrowserProvider} that retrieves the browser type from a JSON file.
+ * Implementation of {@link DriverProvider} that retrieves the browser type from a JSON file.
  * <p>
  * This class is designed to read a JSON file that contains a key-value pair where the key is "browser",
  * and the value is the name of the browser to be used for the browser session.
@@ -21,18 +21,18 @@ import java.nio.file.Paths;
  * </pre>
  * </p>
  */
-public class JsonBrowserProvider implements BrowserProvider {
+public class JsonDriverProvider implements DriverProvider {
     private final String filePath;
 
     /**
-     * Constructor to initialize the {@link JsonBrowserProvider} with the path to the JSON file.
+     * Constructor to initialize the {@link JsonDriverProvider} with the path to the JSON file.
      * <p>
      * The JSON file should contain a key "browser" with the value being the name of the browser.
      * </p>
      *
      * @param filePath the path to the JSON file containing the browser configuration.
      */
-    public JsonBrowserProvider(String filePath) {
+    public JsonDriverProvider(String filePath) {
         this.filePath = filePath;
     }
 
@@ -56,7 +56,7 @@ public class JsonBrowserProvider implements BrowserProvider {
             JsonObject json = JsonParser.parseString(content).getAsJsonObject();
 
             // Get the value of the "browser" property from the JSON object
-            return json.get("browser").getAsString();
+            return json.get("driver").getAsString();
         } catch (Exception e) {
             // Handle any exception that occurs during reading or parsing the JSON file
             throw new RuntimeException("Failed to read browser from JSON file", e);

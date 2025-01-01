@@ -1,10 +1,10 @@
-package browser;
+package driver;
 
 /**
  * Represents the types of browsers supported by the automation framework.
  * This enum provides a list of commonly used web browsers for testing purposes.
  */
-public enum BrowserType {
+public enum DriverType {
     /**
      * Google Chrome browser
      */

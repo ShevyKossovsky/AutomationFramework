@@ -1,17 +1,16 @@
-package browser;
+package driver;
 
-import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.WebDriver;
 
 /**
  * Manages browser sessions within a web automation framework.
  * <p>
  * This class is responsible for handling the creation, management, and termination of WebDriver instances
- * based on the browser type. It uses the {@link BrowserProvider} to determine which browser to use.
+ * based on the browser type. It uses the {@link DriverProvider} to determine which browser to use.
  * It allows for browser actions such as navigating to URLs, restarting the browser, and checking if the browser
  * is active.
  */
-public class BrowserSessionManager implements BrowserSessionService {
+public class DriverSessionManager implements DriverSessionService {
 
     // The WebDriver instance managing the browser session.
     private WebDriver driver;
@@ -24,7 +23,7 @@ public class BrowserSessionManager implements BrowserSessionService {
      *
      * @param driver the WebDriver instance to be shared.
      */
-    public BrowserSessionManager(WebDriver driver) {
+    public DriverSessionManager(WebDriver driver) {
         this.driver = driver;
     }
 
@@ -49,15 +48,16 @@ public class BrowserSessionManager implements BrowserSessionService {
      * Sets the WebDriver instance for the specified browser.
      * <p>
      * This method initializes and configures the WebDriver according to the browser type provided by
-     * the {@link BrowserProvider}. The WebDriver will be set for use in the current session.
+     * the {@link DriverProvider}. The WebDriver will be set for use in the current session.
      *
-     * @param browserProvider the implementation of {@link BrowserProvider} that provides the browser type.
+     * @param browserProvider the implementation of {@link DriverProvider} that provides the browser type.
      * @return the initialized WebDriver instance for the specified browser.
      */
     @Override
-    public void setDriver(BrowserProvider browserProvider) {
+    public WebDriver setDriver(DriverProvider browserProvider) {
         // Use the BrowserFactory to create the WebDriver based on the browser type.
-        driver = BrowserFactory.createDriver(browserProvider);
+        driver = DriverFactory.createDriver(browserProvider);
+        return driver;
     }
 
     /**
@@ -68,10 +68,10 @@ public class BrowserSessionManager implements BrowserSessionService {
      * @param driver the WebDriver instance to be closed.
      */
     @Override
-    public void closeDriver(WebDriver driver) {
+    public void quitDriver(WebDriver driver) {
         if (driver != null) {
-            driver.quit(); // Close the browser session.
-            this.driver = null; // Set the driver to null as the session is closed.
+            driver.quit();
+            this.driver = null;
         }
     }
 
@@ -113,8 +113,8 @@ public class BrowserSessionManager implements BrowserSessionService {
      */
     @Override
     public void restartDriver(WebDriver driver) {
-        closeDriver(driver); // Close the existing driver.
-        setDriver(new BrowserProvider() {
+        quitDriver(driver); // Close the existing driver.
+        setDriver(new DriverProvider() {
             @Override
             public String getBrowserName() {
                 return driver.toString(); // Assuming the driver object can provide its browser name.
@@ -133,7 +133,7 @@ public class BrowserSessionManager implements BrowserSessionService {
     public String getCurrentBrowser() {
         if (driver != null) {
             String driverName = driver.getClass().getSimpleName();
-            return driverName.replace("Driver", ""); // Returns "Chrome", "Firefox", etc.
+            return driverName.replace("Driver", "");
         } else {
             throw new IllegalStateException("Driver is not initialized.");
         }

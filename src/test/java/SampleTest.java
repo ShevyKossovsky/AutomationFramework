@@ -1,7 +1,7 @@
-import browser.*;
+import driver.*;
 import extensions.LoggerExtension;
 import extensions.ScreenshotExtension;
-import extensions.StoreManager;
+import extensions.DriverStoreManager;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.openqa.selenium.By;
@@ -10,45 +10,45 @@ import waiting.WaitingManager;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-
 @ExtendWith({LoggerExtension.class, ScreenshotExtension.class})
 public class SampleTest {
-    private static RegularBrowserManager browserManager;
-    private static StoreManager storeManager;
+    private static RegularDriverManager driverManager;
 
     @BeforeAll
     public static void setUp() {
-        storeManager = StoreManager.getInstance();
-        browserManager = new RegularBrowserManager();
-        storeManager.putStoreValue("browserManager", browserManager);
-        browserManager.setDriver(new JsonBrowserProvider("./settings.json"));
+        driverManager = new RegularDriverManager();
+        // Initialize the driver and add to DriverStoreManager
+        driverManager.setDriver(new JsonDriverProvider("./settings.json"));
+        DriverStoreManager.addDriverToDriversMap("chromeDriver", driverManager.getDriver());
+        DriverStoreManager.setCurrentDriver(driverManager.getDriver());
+        driverManager.navigateTo("https://www.google.com/");
 
     }
 
     @DisplayName("Test01")
     @Test
     public void testSample1() {
-        browserManager.navigateTo("https://www.google.com/");
-        browserManager.maximizeWindow();
-        WebElement searchBox = browserManager.getDriver().findElement(By.name("q"));
+        driverManager.maximizeWindow();
+        WebElement searchBox = driverManager.getDriver().findElement(By.name("q"));
         searchBox.sendKeys("Testing Automation Framework");
         searchBox.submit();
-        WaitingManager waitingManager = new WaitingManager(browserManager.getDriver());
-        waitingManager.waitForPageToLoad(5);
-        assertTrue(browserManager.getCurrentUrl().contains("Testing"));
 
+        WaitingManager waitingManager = new WaitingManager(driverManager.getDriver());
+        waitingManager.waitForPageToLoad(5);
+        assertTrue(driverManager.getCurrentUrl().contains("Testing"));
     }
 
     @DisplayName("Test02")
     @Test
     public void testSample2() {
-        browserManager.navigateTo("https://www.google.com/");
-        WebElement e = browserManager.getDriver().findElement(By.name("q"));
-        assertTrue(e.isDisplayed());
+        WebElement e = driverManager.getDriver().findElement(By.name("q"));
+        assertFalse(e.isDisplayed());
     }
 
     @AfterAll
     public static void closeSession() {
-        browserManager.closeDriver();
+        driverManager.quitDriver();
+        DriverStoreManager.removeCurrentDriver();
+
     }
 }

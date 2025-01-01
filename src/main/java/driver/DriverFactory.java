@@ -1,4 +1,4 @@
-package browser;
+package driver;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.WebDriver;
@@ -12,10 +12,10 @@ import org.openqa.selenium.safari.SafariDriver;
  * Factory class responsible for creating WebDriver instances for various browsers.
  * <p>
  * This class provides a static method to create a WebDriver instance based on the
- * browser name provided by a {@link BrowserProvider}.
+ * browser name provided by a {@link DriverProvider}.
  * <p>
  * Usage:
- * - Implement the {@link BrowserProvider} interface to define how the browser name
+ * - Implement the {@link DriverProvider} interface to define how the browser name
  * is retrieved (e.g., from an enum, a JSON file, etc.).
  * - Pass the implementation to the `createDriver` method to initialize the desired
  * WebDriver.
@@ -31,16 +31,16 @@ import org.openqa.selenium.safari.SafariDriver;
  * This class uses WebDriverManager for automatic setup of browser drivers.
  * Ensure that WebDriverManager is properly included in your project dependencies.
  */
-public class BrowserFactory {
+public class DriverFactory {
 
     /**
-     * Creates a WebDriver instance based on the browser name provided by the {@link BrowserProvider}.
+     * Creates a WebDriver instance based on the browser name provided by the {@link DriverProvider}.
      *
-     * @param browserProvider an implementation of {@link BrowserProvider} that provides the browser name.
+     * @param browserProvider an implementation of {@link DriverProvider} that provides the browser name.
      * @return the WebDriver instance for the specified browser.
      * @throws IllegalArgumentException if the browser name is not supported.
      */
-    public static WebDriver createDriver(BrowserProvider browserProvider) {
+    public static WebDriver createDriver(DriverProvider browserProvider) {
         // Retrieve the browser name from the provider and convert it to uppercase.
         String browserName = browserProvider.getBrowserName().toUpperCase();
         // Determine the appropriate WebDriver based on the browser name.

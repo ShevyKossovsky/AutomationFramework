@@ -1,9 +1,8 @@
-package browser;
-
+package driver;
 import org.openqa.selenium.WebDriver;
 
 /**
- * The {@code RegularBrowserManager} class serves as a central point for managing browser-related operations
+ * The {@code RegularDriverManager} class serves as a central point for managing browser-related operations
  * and handling WebDriver instances in a structured and modular way. This class provides a variety of methods
  * to control and interact with the browser, including setting up WebDriver, managing browser windows, and
  * navigating through web pages.
@@ -11,12 +10,24 @@ import org.openqa.selenium.WebDriver;
  * <p>It integrates session management, window management, and page interaction into a single
  * cohesive interface, making it easier to write maintainable and reusable browser automation code.</p>
  */
-public class RegularBrowserManager {
+public class RegularDriverManager {
 
     private WebDriver driver;
-    private BrowserSessionService browserSessionManager;
-    private BrowserWindowService browserWindowManager;
-    private BrowserPageService browserPageManager;
+    private DriverSessionService driverSessionManager;
+    private DriverWindowService browserWindowManager;
+    private DriverPageService browserPageManager;
+
+    /**
+     * Default constructor for {@code RegularDriverManager}.
+     *
+     * <p>By default, this constructor initializes a {@link DriverSessionService} instance with a
+     * {@code null} driver. Other services such as {@link DriverWindowService} and
+     * {@link DriverPageService} will be initialized when a valid WebDriver instance is set using
+     * {@link #setDriver(DriverProvider)}.</p>
+     */
+    public RegularDriverManager() {
+        this.driverSessionManager = new DriverSessionManager(null);
+    }
 
     /**
      * Retrieves the currently active WebDriver instance being used in this session.
@@ -28,37 +39,25 @@ public class RegularBrowserManager {
      * @throws IllegalStateException if the driver is not initialized.
      */
     public WebDriver getDriver() {
-        if (driver != null)
+        if (driver != null) {
             return driver;
+        }
         throw new IllegalStateException("Driver is not initialized. Please provide a valid driver.");
     }
 
     /**
-     * Default constructor for {@code RegularBrowserManager}.
-     *
-     * <p>By default, this constructor initializes a {@link BrowserSessionService} instance with a
-     * {@code null} driver. Other services such as {@link BrowserWindowService} and
-     * {@link BrowserPageService} will be initialized when a valid WebDriver instance is set using
-     * {@link #setDriver(BrowserProvider)}.</p>
-     */
-    public RegularBrowserManager() {
-        this.browserSessionManager = new BrowserSessionManager(null);
-    }
-
-    /**
-     * Configures the WebDriver by using a specific {@link BrowserProvider} implementation.
+     * Configures the WebDriver by using a specific {@link DriverProvider} implementation.
      *
      * <p>This method initializes the WebDriver instance for the current session, and also sets up
      * related services such as window management and page management to enable further operations.</p>
      *
-     * @param browserProvider an implementation of {@link BrowserProvider} responsible for creating
-     *                        and configuring the WebDriver instance.
+     * @param driverProvider an implementation of {@link DriverProvider} responsible for creating
+     *                       and configuring the WebDriver instance.
      */
-    public void setDriver(BrowserProvider browserProvider) {
-        this.browserSessionManager.setDriver(browserProvider);
-        this.driver = this.browserSessionManager.getDriver();
-        this.browserWindowManager = new BrowserWindowManager(driver);
-        this.browserPageManager = new BrowserPageManager(driver);
+    public void setDriver(DriverProvider driverProvider) {
+        this.driver = this.driverSessionManager.setDriver(driverProvider);
+        this.browserWindowManager = new DriverWindowManager(driver);
+        this.browserPageManager = new DriverPageManager(driver);
     }
 
     /**
@@ -67,8 +66,8 @@ public class RegularBrowserManager {
      * <p>Releases all resources associated with the driver and terminates the browser instance.
      * This method should be called at the end of a test or operation to ensure proper cleanup.</p>
      */
-    public void closeDriver() {
-        browserSessionManager.closeDriver(driver);
+    public void quitDriver() {
+        driverSessionManager.quitDriver(driver);
     }
 
     /**
@@ -80,7 +79,7 @@ public class RegularBrowserManager {
      * @return {@code true} if the browser is active, {@code false} otherwise.
      */
     public boolean isBrowserActive() {
-        return browserSessionManager.isBrowserActive();
+        return driverSessionManager.isBrowserActive();
     }
 
     /**
@@ -92,7 +91,7 @@ public class RegularBrowserManager {
      * @param url the URL to navigate to. This should be a valid web address.
      */
     public void navigateTo(String url) {
-        browserSessionManager.navigateTo(url);
+        driverSessionManager.navigateTo(url);
     }
 
     /**
@@ -102,19 +101,19 @@ public class RegularBrowserManager {
      * subsequent operations or tests.</p>
      */
     public void restartDriver() {
-        browserSessionManager.restartDriver(driver);
+        driverSessionManager.restartDriver(driver);
     }
 
     /**
      * Retrieves the name of the current browser being used.
      *
-     * <p>The browser name is determined by the {@link BrowserProvider} used to initialize the WebDriver.
+     * <p>The browser name is determined by the {@link DriverProvider} used to initialize the WebDriver.
      * This can be useful for logging or debugging purposes.</p>
      *
      * @return the name of the browser as a {@code String}.
      */
     public String getCurrentBrowser() {
-        return browserSessionManager.getCurrentBrowser();
+        return driverSessionManager.getCurrentBrowser();
     }
 
     /**
@@ -125,18 +124,6 @@ public class RegularBrowserManager {
      */
     public void refreshPage() {
         browserPageManager.refreshPage();
-    }
-
-    /**
-     * Retrieves the current URL of the active browser session.
-     *
-     * <p>If no browser is active, this method will return {@code null}. This can be useful for
-     * verification purposes in automated tests.</p>
-     *
-     * @return the current URL as a {@code String}, or {@code null} if no session is active.
-     */
-    public String getCurrentUrl() {
-        return driver != null ? driver.getCurrentUrl() : null;
     }
 
     /**
@@ -171,4 +158,20 @@ public class RegularBrowserManager {
     public void setWindowSize(int width, int height) {
         browserWindowManager.setWindowSize(width, height);
     }
+
+    /**
+     * Retrieves the current URL of the active browser session.
+     *
+     * <p>If no browser is active, this method will return {@code null}. This can be useful for
+     * verification purposes in automated tests.</p>
+     *
+     * @return the current URL as a {@code String}, or {@code null} if no session is active.
+     */
+    public String getCurrentUrl() {
+        if (driver != null) {
+            return driver.getCurrentUrl();
+        }
+        return null;
+    }
+
 }

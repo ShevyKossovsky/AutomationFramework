@@ -1,11 +1,11 @@
-package browser;
+package driver;
 
 import org.openqa.selenium.WebDriver;
 
 /**
  * Manages browser page operations.
  */
-public class BrowserPageManager implements BrowserPageService {
+public class DriverPageManager implements DriverPageService {
     WebDriver driver;
 
     /**
@@ -13,7 +13,7 @@ public class BrowserPageManager implements BrowserPageService {
      *
      * @param driver The WebDriver instance to be used for browser operations.
      */
-    public BrowserPageManager(WebDriver driver) {
+    public DriverPageManager(WebDriver driver) {
         this.driver = driver;
     }
 

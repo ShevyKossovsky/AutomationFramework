@@ -1,18 +1,18 @@
-package browser;
+package driver;
 
 /**
  * Represents a browser provider that uses an enumeration to specify the browser type.
  * This class implements the BrowserProvider interface.
  */
-public class EnumBrowserProvider implements BrowserProvider {
-    private final BrowserType browserType;
+public class EnumDriverProvider implements DriverProvider {
+    private final DriverType browserType;
 
     /**
      * Constructs a new EnumBrowserProvider with the specified browser type.
      *
      * @param browserType The type of browser to be provided, represented by a BrowserType enum.
      */
-    public EnumBrowserProvider(BrowserType browserType) {
+    public EnumDriverProvider(DriverType browserType) {
         this.browserType = browserType;
     }
 

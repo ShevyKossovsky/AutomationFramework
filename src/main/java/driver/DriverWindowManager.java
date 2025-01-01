@@ -1,4 +1,4 @@
-package browser;
+package driver;
 
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
@@ -7,7 +7,7 @@ import org.openqa.selenium.WebDriver;
  * Manages browser window operations using WebDriver.
  * This class implements the BrowserWindowService interface.
  */
-public class BrowserWindowManager implements BrowserWindowService {
+public class DriverWindowManager implements DriverWindowService {
 
     /**
      * The WebDriver instance used for browser interactions.
@@ -19,7 +19,7 @@ public class BrowserWindowManager implements BrowserWindowService {
      *
      * @param driver The WebDriver instance to be used for browser window operations.
      */
-    public BrowserWindowManager(WebDriver driver) {
+    public DriverWindowManager(WebDriver driver) {
 
         this.driver = driver;
     }

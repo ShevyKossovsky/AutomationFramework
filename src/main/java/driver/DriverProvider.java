@@ -1,9 +1,9 @@
-package browser;
+package driver;
 
 /**
  * Provides an interface for retrieving the name of a browser.
  */
-public interface BrowserProvider {
+public interface DriverProvider {
     /**
      * Gets the name of the browser.
      *
