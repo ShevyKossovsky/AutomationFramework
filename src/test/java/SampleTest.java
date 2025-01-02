@@ -1,11 +1,8 @@
 import actions.WebElementActions;
 import driver.*;
-
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-
-
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 

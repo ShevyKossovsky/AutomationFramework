@@ -7,6 +7,7 @@ import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import utils.JsonFileReader;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -16,43 +17,41 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 /**
- * ScreenshotExtension is a JUnit 5 extension designed to capture screenshots when test cases fail.
- * <p>
- * This extension is particularly useful for debugging and identifying the state of the application
- * at the time of failure. It uses Selenium WebDriver to capture the current browser window's state
- * as an image file.
+ * This extension is particularly useful for debugging and identifying the state
+ * of the application during test failures. Screenshots are saved with a timestamp
+ * and the test name for easy identification.
  * </p>
  *
  * <h2>Key Features:</h2>
  * <ul>
  *     <li>Captures screenshots only for failed test cases.</li>
- *     <li>Automatically saves screenshots with a timestamp and test name for easy identification.</li>
- *     <li>Ensures the output directory exists before saving files.</li>
+ *     <li>Saves screenshots with a timestamp and test name.</li>
+ *     <li>Ensures the output directory exists before saving the screenshot.</li>
  * </ul>
  *
  * @author Shevy Kossovsky
+ * @version 1.0
  */
 public class ScreenshotExtension implements TestWatcher {
 
     /**
-     * Logger instance to log messages and errors related to screenshot capturing.
+     * Logger instance for logging messages and errors related to screenshot capturing.
      */
     private static final Logger logger = LoggerFactory.getLogger(ScreenshotExtension.class);
 
     /**
-     * Invoked when a test fails. This method attempts to capture a screenshot of the current browser state.
+     * Called when a test fails. This method captures a screenshot of the current browser state.
      *
-     * @param context The {@link ExtensionContext} representing the current test execution state.
+     * @param context The {@link ExtensionContext} that provides information about the test execution.
      * @param cause   The {@link Throwable} that caused the test to fail.
      */
     @Override
     public void testFailed(ExtensionContext context, Throwable cause) {
         String testName = context.getDisplayName();
 
-        // Retrieve the first available WebDriver instance from DriverStoreManager
-        WebDriver driver = DriverStoreManager.getCurrentDriver();
+        String driverName = JsonFileReader.getValue("C:/Users/Shevy/Desktop/AutomationFramework/config.json", "driver");
+        WebDriver driver = DriverStoreManager.getDriverFromDriversMap(driverName);
 
-        // Check if a valid WebDriver instance is available
         if (driver != null) {
             takeScreenshot(driver, testName);
         } else {
@@ -62,13 +61,9 @@ public class ScreenshotExtension implements TestWatcher {
 
     /**
      * Captures a screenshot using the provided WebDriver instance and saves it to a file.
-     * <p>
-     * The screenshot is saved in the "screenshots" directory with a filename that includes the test name
-     * and a timestamp to avoid overwriting files from previous test runs.
-     * </p>
      *
      * @param driver   The {@link WebDriver} instance used to capture the screenshot.
-     * @param testName The name of the test, used to construct the screenshot filename.
+     * @param testName The name of the test, used in the screenshot filename.
      */
     private void takeScreenshot(WebDriver driver, String testName) {
         try {

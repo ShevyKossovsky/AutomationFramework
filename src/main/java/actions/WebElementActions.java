@@ -3,6 +3,8 @@ package actions;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
 
+import static java.awt.SystemColor.text;
+
 /**
  * This class contains various static utility methods to perform actions on web elements.
  * These methods are used to interact with elements on the web page in a variety of ways,
@@ -84,12 +86,10 @@ public class WebElementActions {
      */
     public static boolean isElementInViewport(WebDriver driver, WebElement element) {
         JavascriptExecutor js = (JavascriptExecutor) driver;
-
         return (boolean) js.executeScript(
                 "return (arguments[0].offsetTop >= window.pageYOffset && arguments[0].offsetTop <= window.pageYOffset + window.innerHeight);",
                 element
         );
-
     }
 
     /**
@@ -152,13 +152,18 @@ public class WebElementActions {
     }
 
     /**
-     * Performs a hover action over the given web element.
+     * Finds an element that contains the specified text, regardless of its tag.
      *
-     * @param driver  The WebDriver instance used for interacting with the web page.
-     * @param element The WebElement to hover over.
+     * @param driver The WebDriver instance used for interacting with the web page.
+     * @param text   The text to search for within the element.
+     * @return The WebElement containing the specified text, or null if not found.
      */
-    public static void hoverOverElement(WebDriver driver, WebElement element) {
-        Actions actions = new Actions(driver);
-        actions.moveToElement(element).build().perform();
+    public WebElement findElementByText(WebDriver driver, String text) {
+        try {
+            return driver.findElement(By.xpath("//*[contains(text(),'" + text + "')]"));
+        } catch (NoSuchElementException e) {
+            return null; // Return null if no matching element is found
+        }
     }
 }
+
