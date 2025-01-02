@@ -4,6 +4,8 @@ import org.openqa.selenium.WebDriver;
 
 /**
  * Manages browser page operations.
+ *
+ *  * @author Shevy Kossovsky
  */
 public class DriverPageManager implements DriverPageService {
     WebDriver driver;

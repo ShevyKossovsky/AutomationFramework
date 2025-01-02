@@ -6,6 +6,8 @@ import org.openqa.selenium.WebDriver;
 /**
  * Manages browser window operations using WebDriver.
  * This class implements the BrowserWindowService interface.
+ *
+ * @author Shevy Kossovsky
  */
 public class DriverWindowManager implements DriverWindowService {
 

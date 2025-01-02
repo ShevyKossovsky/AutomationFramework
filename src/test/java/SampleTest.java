@@ -1,54 +1,32 @@
+import actions.WebElementActions;
 import driver.*;
-import extensions.LoggerExtension;
-import extensions.ScreenshotExtension;
-import extensions.DriverStoreManager;
+
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-import waiting.WaitingManager;
 
-import static org.junit.jupiter.api.Assertions.*;
 
-@ExtendWith({LoggerExtension.class, ScreenshotExtension.class})
-public class SampleTest {
-    private static RegularDriverManager driverManager;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-    @BeforeAll
-    public static void setUp() {
-        driverManager = new RegularDriverManager();
-        // Initialize the driver and add to DriverStoreManager
-        driverManager.setDriver(new JsonDriverProvider("./settings.json"));
-        DriverStoreManager.addDriverToDriversMap("chromeDriver", driverManager.getDriver());
-        DriverStoreManager.setCurrentDriver(driverManager.getDriver());
-        driverManager.navigateTo("https://www.google.com/");
 
+public class SampleTest extends BaseTest {
+
+    public SampleTest() {
+        super(new StandardDriverManager());
     }
 
-    @DisplayName("Test01")
+    @DisplayName("Test01 - Verify Search Functionality")
     @Test
     public void testSample1() {
-        driverManager.maximizeWindow();
-        WebElement searchBox = driverManager.getDriver().findElement(By.name("q"));
-        searchBox.sendKeys("Testing Automation Framework");
-        searchBox.submit();
 
-        WaitingManager waitingManager = new WaitingManager(driverManager.getDriver());
-        waitingManager.waitForPageToLoad(5);
-        assertTrue(driverManager.getCurrentUrl().contains("Testing"));
-    }
+        WebElement searchBox;
 
-    @DisplayName("Test02")
-    @Test
-    public void testSample2() {
-        WebElement e = driverManager.getDriver().findElement(By.name("q"));
-        assertFalse(e.isDisplayed());
-    }
+        searchBox = driver.findElement(By.name("q"));
 
-    @AfterAll
-    public static void closeSession() {
-        driverManager.quitDriver();
-        DriverStoreManager.removeCurrentDriver();
+        WebElementActions.sendKeys(driver, searchBox, "Testing Automation Framework");
+        WebElementActions.submit(driver, searchBox);
+        assertTrue(driverManager.getCurrentUrl().contains("Testing"),
+                "URL does not contain the expected text.");
 
     }
 }

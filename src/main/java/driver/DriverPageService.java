@@ -2,6 +2,8 @@ package driver;
 
 /**
  * Provides services for browser page operations.
+ *
+ * @author Shevy Kossovsky
  */
 public interface DriverPageService {
     /**

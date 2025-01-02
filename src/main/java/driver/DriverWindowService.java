@@ -2,6 +2,8 @@ package driver;
 
 /**
  * Provides services for managing browser window operations.
+ *
+ * @author Shevy Kossovsky
  */
 public interface DriverWindowService {
     

@@ -1,16 +1,21 @@
 package driver;
+
 import org.openqa.selenium.WebDriver;
 
 /**
- * The {@code RegularDriverManager} class serves as a central point for managing browser-related operations
- * and handling WebDriver instances in a structured and modular way. This class provides a variety of methods
- * to control and interact with the browser, including setting up WebDriver, managing browser windows, and
- * navigating through web pages.
+ * The {@code StandardDriverManager} class is a concrete implementation of the {@link DriverManager} abstract class.
+ * It centralizes WebDriver management and provides tools for browser operations such as session handling,
+ * window management, and page interactions.
  *
- * <p>It integrates session management, window management, and page interaction into a single
- * cohesive interface, making it easier to write maintainable and reusable browser automation code.</p>
+ * <p>This class is designed to work with web-based drivers (e.g., ChromeDriver, FirefoxDriver) and integrates
+ * functionality for managing the browser lifecycle, navigation, and interaction seamlessly.</p>
+ *
+ * <p>By extending {@link DriverManager}, this class provides a cohesive and modular structure for
+ * WebDriver-based automation, enabling easier maintenance and reusability of code across projects.</p>
+ *
+ * @author Shevy Kossovsky
  */
-public class RegularDriverManager {
+public class StandardDriverManager extends DriverManager {
 
     private WebDriver driver;
     private DriverSessionService driverSessionManager;
@@ -18,14 +23,13 @@ public class RegularDriverManager {
     private DriverPageService browserPageManager;
 
     /**
-     * Default constructor for {@code RegularDriverManager}.
+     * Default constructor for {@code StandardDriverManager}.
      *
      * <p>By default, this constructor initializes a {@link DriverSessionService} instance with a
      * {@code null} driver. Other services such as {@link DriverWindowService} and
      * {@link DriverPageService} will be initialized when a valid WebDriver instance is set using
-     * {@link #setDriver(DriverProvider)}.</p>
      */
-    public RegularDriverManager() {
+    public StandardDriverManager() {
         this.driverSessionManager = new DriverSessionManager(null);
     }
 
@@ -38,6 +42,7 @@ public class RegularDriverManager {
      * @return the active {@link WebDriver} instance.
      * @throws IllegalStateException if the driver is not initialized.
      */
+    @Override
     public WebDriver getDriver() {
         if (driver != null) {
             return driver;
@@ -54,8 +59,9 @@ public class RegularDriverManager {
      * @param driverProvider an implementation of {@link DriverProvider} responsible for creating
      *                       and configuring the WebDriver instance.
      */
-    public void setDriver(DriverProvider driverProvider) {
-        this.driver = this.driverSessionManager.setDriver(driverProvider);
+    @Override
+    public void setDriver(String driverName) {
+        this.driver = this.driverSessionManager.setDriver(driverName);
         this.browserWindowManager = new DriverWindowManager(driver);
         this.browserPageManager = new DriverPageManager(driver);
     }
@@ -66,6 +72,7 @@ public class RegularDriverManager {
      * <p>Releases all resources associated with the driver and terminates the browser instance.
      * This method should be called at the end of a test or operation to ensure proper cleanup.</p>
      */
+    @Override
     public void quitDriver() {
         driverSessionManager.quitDriver(driver);
     }
@@ -78,6 +85,7 @@ public class RegularDriverManager {
      *
      * @return {@code true} if the browser is active, {@code false} otherwise.
      */
+    @Override
     public boolean isBrowserActive() {
         return driverSessionManager.isBrowserActive();
     }
@@ -90,19 +98,11 @@ public class RegularDriverManager {
      *
      * @param url the URL to navigate to. This should be a valid web address.
      */
+    @Override
     public void navigateTo(String url) {
         driverSessionManager.navigateTo(url);
     }
 
-    /**
-     * Restarts the WebDriver session by closing the current browser and starting a new session.
-     *
-     * <p>This method can be used to reset the browser state, ensuring a clean environment for
-     * subsequent operations or tests.</p>
-     */
-    public void restartDriver() {
-        driverSessionManager.restartDriver(driver);
-    }
 
     /**
      * Retrieves the name of the current browser being used.
@@ -112,6 +112,7 @@ public class RegularDriverManager {
      *
      * @return the name of the browser as a {@code String}.
      */
+    @Override
     public String getCurrentBrowser() {
         return driverSessionManager.getCurrentBrowser();
     }
@@ -122,6 +123,7 @@ public class RegularDriverManager {
      * <p>This method reloads the current web page using the WebDriver instance. It can be useful
      * for testing page reload behavior or applying updates to dynamic content.</p>
      */
+    @Override
     public void refreshPage() {
         browserPageManager.refreshPage();
     }
@@ -132,6 +134,7 @@ public class RegularDriverManager {
      * <p>This method adjusts the browser window size for optimal visibility, which is particularly
      * useful when running tests on desktop environments.</p>
      */
+    @Override
     public void maximizeWindow() {
         browserWindowManager.maximizeWindow();
     }
@@ -142,6 +145,7 @@ public class RegularDriverManager {
      * <p>This can be used to reduce the browser's visibility, which may be useful in scenarios
      * where the browser needs to remain open but not actively displayed.</p>
      */
+    @Override
     public void minimizeWindow() {
         browserWindowManager.minimizeWindow();
     }
@@ -155,6 +159,7 @@ public class RegularDriverManager {
      * @param width  the desired width of the browser window in pixels.
      * @param height the desired height of the browser window in pixels.
      */
+    @Override
     public void setWindowSize(int width, int height) {
         browserWindowManager.setWindowSize(width, height);
     }
@@ -167,11 +172,11 @@ public class RegularDriverManager {
      *
      * @return the current URL as a {@code String}, or {@code null} if no session is active.
      */
+    @Override
     public String getCurrentUrl() {
         if (driver != null) {
             return driver.getCurrentUrl();
         }
         return null;
     }
-
 }

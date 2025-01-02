@@ -30,19 +30,21 @@ import org.openqa.selenium.safari.SafariDriver;
  * Dependency:
  * This class uses WebDriverManager for automatic setup of browser drivers.
  * Ensure that WebDriverManager is properly included in your project dependencies.
+ * <p>
+ * * @author Shevy Kossovsky
  */
 public class DriverFactory {
 
     /**
      * Creates a WebDriver instance based on the browser name provided by the {@link DriverProvider}.
      *
-     * @param browserProvider an implementation of {@link DriverProvider} that provides the browser name.
+     * @param driverName an implementation of {@link DriverProvider} that provides the browser name.
      * @return the WebDriver instance for the specified browser.
      * @throws IllegalArgumentException if the browser name is not supported.
      */
-    public static WebDriver createDriver(DriverProvider browserProvider) {
+    public static WebDriver createDriver(String driverName) {
         // Retrieve the browser name from the provider and convert it to uppercase.
-        String browserName = browserProvider.getBrowserName().toUpperCase();
+        String browserName = driverName.toUpperCase();
         // Determine the appropriate WebDriver based on the browser name.
         switch (browserName) {
             case "CHROME":

@@ -1,4 +1,4 @@
-package extensions;
+package driver;
 
 import org.openqa.selenium.WebDriver;
 
@@ -14,6 +14,8 @@ import java.util.Map;
  * <p>
  * The DriverStoreManager ensures that only one instance of the store exists throughout the lifecycle of the application or test execution.
  * </p>
+ *
+ * @author Shevy Kossovsky
  */
 public class DriverStoreManager {
 

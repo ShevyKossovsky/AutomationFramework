@@ -1,5 +1,6 @@
 package extensions;
 
+import driver.DriverStoreManager;
 import org.junit.jupiter.api.extension.*;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
@@ -17,17 +18,19 @@ import java.time.format.DateTimeFormatter;
 /**
  * ScreenshotExtension is a JUnit 5 extension designed to capture screenshots when test cases fail.
  * <p>
- * This class is particularly useful for debugging and identifying the state of the application at the time of failure.
- * It uses Selenium WebDriver to capture the current browser window's state as an image file.
+ * This extension is particularly useful for debugging and identifying the state of the application
+ * at the time of failure. It uses Selenium WebDriver to capture the current browser window's state
+ * as an image file.
  * </p>
- * <p>
- * Key Features:
+ *
+ * <h2>Key Features:</h2>
  * <ul>
  *     <li>Captures screenshots only for failed test cases.</li>
  *     <li>Automatically saves screenshots with a timestamp and test name for easy identification.</li>
  *     <li>Ensures the output directory exists before saving files.</li>
  * </ul>
- * </p>
+ *
+ * @author Shevy Kossovsky
  */
 public class ScreenshotExtension implements TestWatcher {
 
@@ -39,13 +42,12 @@ public class ScreenshotExtension implements TestWatcher {
     /**
      * Invoked when a test fails. This method attempts to capture a screenshot of the current browser state.
      *
-     * @param context The ExtensionContext representing the current test execution state.
-     * @param cause   The Throwable that caused the test to fail.
+     * @param context The {@link ExtensionContext} representing the current test execution state.
+     * @param cause   The {@link Throwable} that caused the test to fail.
      */
     @Override
     public void testFailed(ExtensionContext context, Throwable cause) {
         String testName = context.getDisplayName();
-
 
         // Retrieve the first available WebDriver instance from DriverStoreManager
         WebDriver driver = DriverStoreManager.getCurrentDriver();
@@ -60,13 +62,12 @@ public class ScreenshotExtension implements TestWatcher {
 
     /**
      * Captures a screenshot using the provided WebDriver instance and saves it to a file.
-     *
      * <p>
      * The screenshot is saved in the "screenshots" directory with a filename that includes the test name
      * and a timestamp to avoid overwriting files from previous test runs.
      * </p>
      *
-     * @param driver   The WebDriver instance used to capture the screenshot.
+     * @param driver   The {@link WebDriver} instance used to capture the screenshot.
      * @param testName The name of the test, used to construct the screenshot filename.
      */
     private void takeScreenshot(WebDriver driver, String testName) {

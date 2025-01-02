@@ -6,6 +6,8 @@ import org.openqa.selenium.WebDriver;
  * Interface for managing browser sessions in a web automation framework.
  * This interface defines methods for interacting with a browser session, including setting the driver,
  * closing the browser, checking if the browser is active, navigating to URLs, and more.
+ *
+ * @author Shevy Kossovsky
  */
 public interface DriverSessionService {
 
@@ -28,7 +30,7 @@ public interface DriverSessionService {
      *
      * @param browserProvider the implementation of {@link DriverProvider} that provides the browser type.
      */
-    WebDriver setDriver(DriverProvider browserProvider);
+    WebDriver setDriver(String driverName);
 
     /**
      * Closes the current browser session.
@@ -58,14 +60,6 @@ public interface DriverSessionService {
      */
     void navigateTo(String url);
 
-    /**
-     * Restarts the current WebDriver instance.
-     * <p>
-     * This method will close the current browser session and reinitialize the WebDriver for the same browser.
-     *
-     * @param driver the WebDriver instance to be restarted.
-     */
-    void restartDriver(WebDriver driver);
 
     /**
      * Retrieves the name of the currently active browser.

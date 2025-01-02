@@ -9,6 +9,8 @@ import org.openqa.selenium.WebDriver;
  * based on the browser type. It uses the {@link DriverProvider} to determine which browser to use.
  * It allows for browser actions such as navigating to URLs, restarting the browser, and checking if the browser
  * is active.
+ *
+ * @author Shevy Kossovsky
  */
 public class DriverSessionManager implements DriverSessionService {
 
@@ -54,9 +56,9 @@ public class DriverSessionManager implements DriverSessionService {
      * @return the initialized WebDriver instance for the specified browser.
      */
     @Override
-    public WebDriver setDriver(DriverProvider browserProvider) {
+    public WebDriver setDriver(String driverName) {
         // Use the BrowserFactory to create the WebDriver based on the browser type.
-        driver = DriverFactory.createDriver(browserProvider);
+        driver = DriverFactory.createDriver(driverName);
         return driver;
     }
 
@@ -102,24 +104,6 @@ public class DriverSessionManager implements DriverSessionService {
         else {
             throw new IllegalStateException("Driver is not initialized. Unable to navigate.");
         }
-    }
-
-    /**
-     * Restarts the current WebDriver instance.
-     * <p>
-     * This method will close the current browser session and reinitialize the WebDriver for the same browser.
-     *
-     * @param driver the WebDriver instance to be restarted.
-     */
-    @Override
-    public void restartDriver(WebDriver driver) {
-        quitDriver(driver); // Close the existing driver.
-        setDriver(new DriverProvider() {
-            @Override
-            public String getBrowserName() {
-                return driver.toString(); // Assuming the driver object can provide its browser name.
-            }
-        });
     }
 
     /**

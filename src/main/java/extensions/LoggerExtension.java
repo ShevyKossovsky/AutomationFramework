@@ -7,6 +7,9 @@ import org.slf4j.LoggerFactory;
 /**
  * LoggerExtension class is a JUnit 5 extension for logging and handling test lifecycle events.
  * This class logs information about the lifecycle of tests but does not handle screenshots.
+ *
+ *
+ * @author Shevy Kossovsky
  */
 public class LoggerExtension implements BeforeAllCallback,
         BeforeEachCallback,
