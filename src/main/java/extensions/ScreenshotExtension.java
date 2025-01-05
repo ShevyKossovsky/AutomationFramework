@@ -49,7 +49,7 @@ public class ScreenshotExtension implements TestWatcher {
     public void testFailed(ExtensionContext context, Throwable cause) {
         String testName = context.getDisplayName();
 
-        String driverName = JsonFileReader.getValue("C:/Users/Shevy/Desktop/AutomationFramework/config.json", "driver");
+        String driverName = JsonFileReader.getValue("/config.json", "driver");
         WebDriver driver = DriverStoreManager.getDriverFromDriversMap(driverName);
 
         if (driver != null) {

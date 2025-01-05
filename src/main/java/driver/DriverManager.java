@@ -36,7 +36,7 @@ public abstract class DriverManager {
      * @param driverProvider the provider responsible for configuring and
      *                       supplying the WebDriver instance.
      */
-    public abstract void setDriver(String driverName);
+    public abstract void setDriver(DriverProvider driverProvider);
 
     /**
      * Terminates the current WebDriver session and releases associated resources.

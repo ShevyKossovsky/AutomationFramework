@@ -1,3 +1,4 @@
+import driver.DriverProvider;
 import driver.DriverStoreManager;
 import driver.StandardDriverManager;
 import extensions.LoggerExtension;
@@ -8,119 +9,100 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.openqa.selenium.WebDriver;
 import utils.JsonFileReader;
 
-import java.util.Locale;
-
 /**
  * BaseTest serves as a foundation for all test classes, providing a consistent setup and tear down process
  * for managing WebDriver instances. It integrates extensions for logging and screenshot capturing to enhance
  * debugging and traceability.
  *
  * <p>
- * This class ensures that each test:
+ * This class ensures:
  * <ul>
- *     <li>Starts with a properly initialized WebDriver instance.</li>
- *     <li>Incorporates logging and screenshot capturing features for better debugging.</li>
- *     <li>Ends with a cleanup process to terminate the WebDriver session.</li>
+ *     <li>Each test starts with a properly initialized WebDriver instance.</li>
+ *     <li>Logging and screenshot capturing features are integrated for better debugging.</li>
+ *     <li>Proper cleanup is performed to terminate the WebDriver session after each test.</li>
  * </ul>
  * </p>
  *
  * <p>
- * To create specific test cases, extend this class and leverage its setup functionality.
+ * Configuration values (like the base URL and driver type) are read from a JSON file, providing flexibility
+ * and separation of configuration from code.
  * </p>
  *
  * <p>
- * This class reads configuration values (like the base URL and driver type) from a JSON file to
- * ensure flexibility and separation of configuration from code.
+ * To create specific test cases, extend this class and utilize its setup functionality.
  * </p>
  *
  * @author Shevy Kossovsky
  */
 @ExtendWith({LoggerExtension.class, ScreenshotExtension.class})
 public class BaseTest {
+
     /**
      * Manages the lifecycle of the WebDriver instance, including its creation, configuration, and cleanup.
-     * The driver manager is responsible for providing and controlling the WebDriver instance.
      */
     protected StandardDriverManager driverManager;
 
+    private final DriverProvider driverProvider;
+
     /**
      * Represents the WebDriver instance used for browser interactions during the test.
-     * This WebDriver instance is used by the test methods to interact with the browser.
      */
     protected WebDriver driver;
 
     /**
-     * The base URL used as the starting point for all tests.
-     * This URL is fetched from a configuration file and used to navigate to the application before each test.
+     * The base URL used as the starting point for all tests, fetched from a configuration file.
      */
     private final String baseUrl;
 
-    /**
-     * The name of the WebDriver (e.g., "chrome", "firefox") specified in the configuration file.
-     * This is used to determine which browser driver to initialize.
-     */
-    private String driverName;
 
     /**
-     * The file path to the configuration JSON file that contains settings such as URL and driver type.
-     * The configuration file is expected to contain details like the base URL for the application and the desired WebDriver.
-     */
-    private String configFilePath = "C:/Users/Shevy/Desktop/AutomationFramework/config.json";
-
-    /**
-     * Constructs a BaseTest instance with the specified driver manager.
-     * It reads the configuration values (base URL and driver name) from the JSON file.
+     * Constructs a BaseTest instance with the specified driver manager and provider.
+     * Reads configuration values (base URL and driver name) from a JSON file.
      *
-     * @param driverManager the manager responsible for handling WebDriver instances.
-     *                      This is used to manage WebDriver setup, configuration, and cleanup.
+     * @param driverManager  the manager responsible for handling WebDriver instances.
+     * @param driverProvider the provider responsible for WebDriver creation and configuration.
      */
-    public BaseTest(StandardDriverManager driverManager) {
+    public BaseTest(StandardDriverManager driverManager, DriverProvider driverProvider) {
         this.driverManager = driverManager;
-        // Fetching the base URL and driver type from the configuration file
-        this.baseUrl = JsonFileReader.getValue(configFilePath, "url");
-        this.driverName = JsonFileReader.getValue(configFilePath, "driver");
+        this.driverProvider = driverProvider;
+        this.baseUrl = JsonFileReader.getValue("config.json", "url");
     }
 
     /**
      * Sets up the WebDriver environment before each test.
-     * <p>
-     * This includes:
      * <ul>
-     *     <li>Initializing the WebDriver instance using the specified driver name (e.g., "chrome", "firefox").</li>
-     *     <li>Adding the WebDriver instance to a shared map for global access.</li>
-     *     <li>Maximizing the browser window to ensure consistent test execution.</li>
-     *     <li>Navigating to the specified base URL to prepare the application for testing.</li>
+     *     <li>Initializes the WebDriver instance using the driver provider.</li>
+     *     <li>Adds the WebDriver instance to a shared map for global access.</li>
+     *     <li>Maximizes the browser window for consistent test execution.</li>
+     *     <li>Navigates to the specified base URL to prepare the application for testing.</li>
      * </ul>
-     * </p>
      */
     @BeforeEach
     public void setUp() {
-        // Setting the driver based on the driver name read from the configuration file
-        driverManager.setDriver(driverName);
+        // Initialize the WebDriver instance using the specified driver name
+        driverManager.setDriver(driverProvider);
         driver = driverManager.getDriver();
-        // Storing the WebDriver instance in a shared map for future access
-        DriverStoreManager.addDriverToDriversMap(driverName.toLowerCase() + "Driver", driver);
-        // Setting the current driver for later use
+
+        // Store the WebDriver instance in a shared map for future access
+        DriverStoreManager.addDriverToDriversMap(driverProvider.getBrowserName().toLowerCase() + "Driver", driver);
+
+        // Set the current driver for use in tests
         DriverStoreManager.setCurrentDriver(driver);
-        // Maximizing the browser window
+
+        // Maximize the browser window
         driverManager.maximizeWindow();
-        // Navigating to the base URL
+
+        // Navigate to the base URL
         driverManager.navigateTo(baseUrl);
     }
 
     /**
-     * Cleans up the WebDriver environment after each test.
-     * <p>
-     * This includes:
-     * <ul>
-     *     <li>Quitting the WebDriver instance to release resources and prevent memory leaks.</li>
-     * </ul>
-     * </p>
+     * Cleans up the WebDriver environment after each test by quitting the WebDriver instance.
+     * This ensures resources are released and prevents memory leaks.
      */
     @AfterEach
     public void tearDown() {
         if (driverManager != null) {
-            // Quitting the WebDriver instance to ensure resources are released after the test
             driverManager.quitDriver();
         }
     }

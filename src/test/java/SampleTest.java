@@ -3,13 +3,14 @@ import driver.*;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 public class SampleTest extends BaseTest {
 
     public SampleTest() {
-        super(new StandardDriverManager());
+        super(new StandardDriverManager(), new EnumDriverProvider(DriverType.CHROME));
     }
 
     @DisplayName("Test01 - Verify Search Functionality")

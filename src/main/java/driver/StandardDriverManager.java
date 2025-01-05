@@ -3,15 +3,15 @@ package driver;
 import org.openqa.selenium.WebDriver;
 
 /**
- * The {@code StandardDriverManager} class is a concrete implementation of the {@link DriverManager} abstract class.
- * It centralizes WebDriver management and provides tools for browser operations such as session handling,
- * window management, and page interactions.
+ * The {@code StandardDriverManager} class provides a concrete implementation of browser session management.
  *
- * <p>This class is designed to work with web-based drivers (e.g., ChromeDriver, FirefoxDriver) and integrates
- * functionality for managing the browser lifecycle, navigation, and interaction seamlessly.</p>
+ * <p>Extends the {@link DriverManager} abstract class to centralize WebDriver management,
+ * including browser lifecycle, navigation, and interaction handling.</p>
  *
- * <p>By extending {@link DriverManager}, this class provides a cohesive and modular structure for
- * WebDriver-based automation, enabling easier maintenance and reusability of code across projects.</p>
+ * <p>This class supports dynamic configuration of WebDriver instances and provides modular
+ * services for managing windows and pages.</p>
+ *
+ * <p>Recommended for use in projects requiring centralized browser control.</p>
  *
  * @author Shevy Kossovsky
  */
@@ -28,6 +28,7 @@ public class StandardDriverManager extends DriverManager {
      * <p>By default, this constructor initializes a {@link DriverSessionService} instance with a
      * {@code null} driver. Other services such as {@link DriverWindowService} and
      * {@link DriverPageService} will be initialized when a valid WebDriver instance is set using
+     * {@link #setDriver(DriverProvider)}.</p>
      */
     public StandardDriverManager() {
         this.driverSessionManager = new DriverSessionManager(null);
@@ -51,17 +52,21 @@ public class StandardDriverManager extends DriverManager {
     }
 
     /**
-     * Configures the WebDriver by using a specific {@link DriverProvider} implementation.
+     * Configures the WebDriver using a specific {@link DriverProvider} implementation.
      *
-     * <p>This method initializes the WebDriver instance for the current session, and also sets up
-     * related services such as window management and page management to enable further operations.</p>
+     * <p>Initializes the WebDriver instance and sets up auxiliary services:
+     * <ul>
+     *   <li>{@link DriverWindowService} for window management</li>
+     *   <li>{@link DriverPageService} for page interactions</li>
+     * </ul>
+     * </p>
      *
-     * @param driverProvider an implementation of {@link DriverProvider} responsible for creating
-     *                       and configuring the WebDriver instance.
+     * @param driverProvider an implementation of {@link DriverProvider} responsible for
+     *                       creating and configuring the WebDriver instance.
      */
     @Override
-    public void setDriver(String driverName) {
-        this.driver = this.driverSessionManager.setDriver(driverName);
+    public void setDriver(DriverProvider driverProvider) {
+        this.driver = this.driverSessionManager.setDriver(driverProvider);
         this.browserWindowManager = new DriverWindowManager(driver);
         this.browserPageManager = new DriverPageManager(driver);
     }
@@ -70,7 +75,7 @@ public class StandardDriverManager extends DriverManager {
      * Closes the WebDriver session currently in use.
      *
      * <p>Releases all resources associated with the driver and terminates the browser instance.
-     * This method should be called at the end of a test or operation to ensure proper cleanup.</p>
+     * If no WebDriver session is active, this method has no effect.</p>
      */
     @Override
     public void quitDriver() {
@@ -102,7 +107,6 @@ public class StandardDriverManager extends DriverManager {
     public void navigateTo(String url) {
         driverSessionManager.navigateTo(url);
     }
-
 
     /**
      * Retrieves the name of the current browser being used.
@@ -167,8 +171,7 @@ public class StandardDriverManager extends DriverManager {
     /**
      * Retrieves the current URL of the active browser session.
      *
-     * <p>If no browser is active, this method will return {@code null}. This can be useful for
-     * verification purposes in automated tests.</p>
+     * <p>If no WebDriver session is active, this method returns {@code null}.</p>
      *
      * @return the current URL as a {@code String}, or {@code null} if no session is active.
      */
