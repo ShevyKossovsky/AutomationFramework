@@ -30,7 +30,6 @@ import java.time.format.DateTimeFormatter;
  * </ul>
  *
  * @author Shevy Kossovsky
- * @version 1.0
  */
 public class ScreenshotExtension implements TestWatcher {
 
@@ -48,9 +47,7 @@ public class ScreenshotExtension implements TestWatcher {
     @Override
     public void testFailed(ExtensionContext context, Throwable cause) {
         String testName = context.getDisplayName();
-
-        String driverName = JsonFileReader.getValue("/config.json", "driver");
-        WebDriver driver = DriverStoreManager.getDriverFromDriversMap(driverName);
+        WebDriver driver = DriverStoreManager.getCurrentDriver();
 
         if (driver != null) {
             takeScreenshot(driver, testName);
